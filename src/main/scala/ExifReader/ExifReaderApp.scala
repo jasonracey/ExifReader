@@ -2,30 +2,43 @@ package ExifReader
 
 import java.io.File
 
+import org.rogach.scallop._
+
 import scala.sys.process._
-import scala.util.Try
+
+class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
+  val path: ScallopOption[String] = opt[String](required = true)
+  val extensions: ScallopOption[List[String]] = trailArg[List[String]]()
+  verify()
+}
 
 object ExifReaderApp extends App {
-  if (args.length == 0) throw new IllegalArgumentException("Please specify a year.")
+  val conf = new Conf(args)
 
-  val year: Int = Try(args(0).toInt).toOption.getOrElse(throw new IllegalArgumentException("Year must be an int."))
+  val dir: File = new File(conf.path.getOrElse(""))
 
-  // todo: make the entire path the first arg so this can be used by anyone
-  val rawFilesParentDir: File = new File(s"/Volumes/photos-a/Photographs/$year")
+  if (!dir.exists) throw new IllegalArgumentException(s"Directory not found: $dir")
 
-  if (!rawFilesParentDir.exists) throw new IllegalArgumentException(s"Directory not found: $rawFilesParentDir")
+  // empty seq means all files
+  val extensions: Seq[String] = conf.extensions.getOrElse(List.empty[String])
 
-  // todo: make configurable? hard-code every popular raw file extension?
-  val rawFiles: Seq[File] = FileUtil.getFilesOfType(rawFilesParentDir, Seq(".CR2", ".ARW"))
+  println("Finding files...")
 
-  // todo: add exiftool as prereq to readme
+  val files: Seq[File] = FileUtil.getFilesOfType(dir, extensions)
+
+  val totalFileCount: Int = files.size
+  var currentFileCount: Int = 1
+
   // todo: handle tool not found? other errors?
-  // todo: remove take(10)
-  // todo: insert as multiple batches?
-  val photographs: Seq[Photograph] = rawFiles.take(10).map{ src: File =>
+  // todo: remove take(1000)
+  val photographs: Seq[Photograph] = files.take(1000).map{ src: File =>
+    println(s"Reading exif data for file $currentFileCount of $totalFileCount")
+    currentFileCount += 1
     val result: String = s"exiftool ${src.getAbsolutePath}".!!
     Photograph(result)
   }
+
+  println("Inserting exif data...")
 
   Database.insertPhotographs(photographs)
 

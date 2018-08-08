@@ -5,7 +5,7 @@ import java.io.File
 object FileUtil {
   def getFilesOfType(dir: File, extensions: Seq[String]): Seq[File] = {
     getFilesRecursive(dir).filter{ file: File =>
-      extensions.exists{ extension: String =>
+      extensions.isEmpty || extensions.exists{ extension: String =>
         file.getName.toUpperCase.endsWith(extension.toUpperCase)
       }
     }
