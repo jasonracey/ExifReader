@@ -4,6 +4,7 @@ object Orientation extends Enumeration {
   type Orientation = Value
   val Landscape, Portrait = Value
 
+  // todo: other values? canon bug?
   def get(value: Option[String]): Option[Orientation] = {
     value.map{ _.trim } match {
       case Some("Horizontal (normal)") => Some(Landscape)

@@ -4,29 +4,13 @@ import java.time.LocalDateTime
 
 import ExifReader.Orientation.Orientation
 
-/*
-File Name                       : A7300001.ARW
-Directory                       : /Volumes/photos-a/Photographs/2018/20180519_Washington_IngallsCreek/raw
-File Modification Date/Time     : 2018:05:19 12:37:10-07:00
-Orientation                     : Rotate 270 CW
-Image Width                     : 6048
-Image Height                    : 4024
-Aperture                        : 4.0
-ISO                             : 100
-Focal Length In 35mm Format     : 99 mm
-Color Space                     : sRGB
-Make                            : SONY
-Camera Model Name               : ILCE-7M3
-Lens ID                         : Sony FE 24-105mm F4 G OSS
-Megapixels                      : 24.3
-Shutter Speed                   : 1/100
-*/
+import scala.util.Properties
 
 object Photograph {
   val exifToolDateTimePattern: String = "yyyy:MM:dd HH:mm:ssXXX"
 
   def apply(value: String): Photograph = {
-    val lines: Seq[String] = value.split("\\r?\\n")
+    val lines: Seq[String] = value.split(Properties.lineSeparator)
 
     val fields: Map[String, String] = lines.map{ line: String =>
       val items: Seq[String] = line.split(" : ").map{ _.trim }
@@ -55,19 +39,19 @@ object Photograph {
 }
 
 final case class Photograph(
-  aperture: Option[Float] = None,
-  cameraMake: Option[String] = None,
-  cameraModel: Option[String] = None,
-  colorSpace: Option[String] = None,
-  createDate: Option[LocalDateTime] = None,
-  directory: Option[String] = None,
-  fileName: Option[String] = None,
-  focalLength: Option[FocalLength] = None,
-  pixelHeight: Option[Int] = None,
-  pixelWidth: Option[Int] = None,
-  iso: Option[Int] = None,
-  lens: Option[String] = None,
-  megaPixels: Option[Float] = None,
-  orientation: Option[Orientation] = None,
-  shutterSpeed: Option[ShutterSpeed] = None
+  aperture: Option[Float],
+  cameraMake: Option[String],
+  cameraModel: Option[String],
+  colorSpace: Option[String],
+  createDate: Option[LocalDateTime],
+  directory: Option[String],
+  fileName: Option[String],
+  focalLength: Option[FocalLength],
+  pixelHeight: Option[Int],
+  pixelWidth: Option[Int],
+  iso: Option[Int],
+  lens: Option[String],
+  megaPixels: Option[Float],
+  orientation: Option[Orientation],
+  shutterSpeed: Option[ShutterSpeed]
 )
