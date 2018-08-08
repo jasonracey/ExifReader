@@ -9,7 +9,7 @@ $ brew install sqlite
 
 ### Usage
 ```
-$ ./run.sh "-p <path> [extensions]"
+$ ./run.sh "-p <path> [extension(s)]"
 ```
 
 ### Examples (macOS)
