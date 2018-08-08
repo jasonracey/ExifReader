@@ -9,6 +9,12 @@ class FocalLengthTests  extends FunSuite {
     assert(result.get.mm == 50)
   }
 
+  test("unit is case-insensitive"){
+    val result: Option[FocalLength] = FocalLength.get(Some("50 MM"))
+    assert(result.isDefined)
+    assert(result.get.mm == 50)
+  }
+
   test("can parse format without space before unit"){
     val result: Option[FocalLength] = FocalLength.get(Some("50mm"))
     assert(result.isDefined)
