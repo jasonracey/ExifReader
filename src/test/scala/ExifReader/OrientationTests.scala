@@ -10,7 +10,13 @@ class OrientationTests  extends FunSuite {
     assert(result.get == Landscape)
   }
 
-  test("can parse portrait orientation"){
+  test("can parse portrait orientation 90"){
+    val result: Option[Orientation] = Orientation.get(Some("Rotate 90 CW"))
+    assert(result.isDefined)
+    assert(result.get == Portrait)
+  }
+
+  test("can parse portrait orientation 270"){
     val result: Option[Orientation] = Orientation.get(Some("Rotate 270 CW"))
     assert(result.isDefined)
     assert(result.get == Portrait)
@@ -22,8 +28,8 @@ class OrientationTests  extends FunSuite {
     assert(result.get == Portrait)
   }
 
-  test("unexpected input returns None"){
-    val result: Option[Orientation] = Orientation.get(Some("foo"))
-    assert(result.isEmpty)
+  test("unexpected input throws exception"){
+    val exception: Exception = intercept[Exception](Orientation.get(Some("foo")))
+    assert(exception.getMessage == "Unknown orientation: Some(foo)")
   }
 }
