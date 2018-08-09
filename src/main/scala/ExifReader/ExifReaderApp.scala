@@ -12,7 +12,7 @@ object ExifReaderApp {
     sb ++= "-S "
     sb ++= "-Aperture "
     sb ++= "-ColorSpace "
-    sb ++= "-CreateDate " // todo: override default date format
+    sb ++= "-CreateDate "
     sb ++= "-Directory "
     sb ++= "-FileName "
     sb ++= "-FocalLength "
@@ -61,6 +61,7 @@ object ExifReaderApp {
     val photographOptions: Seq[Option[Photograph]] = files.map{ file: File =>
       if (currentFileCount == 1 || currentFileCount % 10 == 0) println(s"Reading exif data for file $currentFileCount of ${files.size}")
 
+      // todo: this is painfully slow - try using exiftool's batch read capability
       val exifToolCommand: String = s"$exifToolCommandSnippet${file.getAbsolutePath}"
 
       try {
