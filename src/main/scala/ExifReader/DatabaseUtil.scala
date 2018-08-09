@@ -2,7 +2,7 @@ package ExifReader
 
 import java.sql._
 
-object Database {
+object DatabaseUtil {
   private val batchSize: Int = 100
 
   private val createTableIfNotExistsSql: String = {
