@@ -106,7 +106,6 @@ object Database {
 
     val sb = new StringBuilder(initialCapacity)
 
-    // todo: what happens when orNull?
     sb ++= s"(${photograph.aperture.orNull}, "
     sb ++= s"'${photograph.cameraMake.orNull}', "
     sb ++= s"'${photograph.cameraModel.orNull}', "
