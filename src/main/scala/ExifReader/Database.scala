@@ -57,27 +57,32 @@ object Database {
   }
 
   def insertPhotographs(photographs: Seq[Photograph]): Unit = {
+    execSql(createTableIfNotExistsSql)
+    // todo: indexes?
+
     val sortedByPathAndName: Seq[Photograph] = photographs.sortBy{ photograph: Photograph =>
       (photograph.directory, photograph.fileName)
     }
 
-    val batches: Iterator[Seq[Photograph]] = sortedByPathAndName.grouped(batchSize)
+    var inserted = 0
 
-    val totalBatchCount: Int = batches.size
-    var currentBatchCount: Int = 1
+    while (inserted <= sortedByPathAndName.size) {
+      val start: Int = inserted
+      val stop: Int = start + batchSize
 
-    batches.foreach{ batch: Seq[Photograph] =>
-      insert(batch)
-      println(s"inserted batch $currentBatchCount of $totalBatchCount")
-      currentBatchCount += 1
+      val recordsToInsert: Seq[Photograph] = sortedByPathAndName.slice(start, stop)
+      val valuesStatements: String = recordsToInsert.map{ makeValuesStatement }.mkString(",")
+      val insertPhotographSql: String = s"$insertPhotographSnippet $valuesStatements"
+
+      execSql(insertPhotographSql)
+
+      println(s"inserted records $start to ${if (stop <= sortedByPathAndName.size) stop else sortedByPathAndName.size}")
+
+      inserted += batchSize
     }
   }
 
-  private def insert(photographs: Seq[Photograph]): Unit = {
-    val valuesStatements: String = photographs.map{ makeValuesStatement }.mkString(",")
-
-    val insertPhotographSql: String = s"$insertPhotographSnippet $valuesStatements"
-
+  private def execSql(sql: String): Unit = {
     // load the sqlite-JDBC driver using the current class loader
     Class.forName("org.sqlite.JDBC")
 
@@ -87,9 +92,7 @@ object Database {
       connection = DriverManager.getConnection("jdbc:sqlite:photographs.db")
       val statement: Statement = connection.createStatement
       statement.setQueryTimeout(30) // seconds
-      statement.executeUpdate(createTableIfNotExistsSql)
-      // todo: indexes?
-      statement.executeUpdate(insertPhotographSql)
+      statement.executeUpdate(sql)
     } catch {
       // if the error message is "out of memory" it probably means no database file is found
       case e: SQLException => System.err.println(e.getMessage)
