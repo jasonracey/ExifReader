@@ -7,13 +7,31 @@ import scala.sys.process._
 import util.Properties
 
 object ExifReaderApp {
-  private val exifToolCommandSnippet: String = {
+  def main(args: Array[String]): Unit = {
+    val conf = new Conf(args)
+
+    val dir: File = new File(conf.path.getOrElse(""))
+    if (!dir.exists) throw new IllegalArgumentException(s"Directory not found: $dir")
+
+    println("Reading exif data...")
+    val extensions: List[String] = conf.extensions.getOrElse(List.empty)
+    val exifToolCommand: String = buildExifToolCommand(extensions, dir.getAbsolutePath)
+    val exifToolResult: String = exifToolCommand.!!
+
+    println("Building photographs...")
+    val photographs: ListBuffer[Photograph] = buildPhotographs(exifToolResult)
+
+    println("Inserting exif data...")
+    Database.insertPhotographs(photographs)
+
+    println("Done.")
+  }
+
+  private def buildExifToolCommand(extensions: List[String], path: String): String = {
     val sb = new StringBuilder
 
     sb ++= "exiftool "
-    sb ++= "-ext crw "
-    sb ++= "-ext cr2 "
-    sb ++= "-ext arw "
+    extensions.foreach{ ext: String => sb ++= s"-ext $ext " }
     sb ++= "-r "
     sb ++= "-S "
     sb ++= "-Aperture "
@@ -31,27 +49,9 @@ object ExifReaderApp {
     sb ++= "-Model "
     sb ++= "-Orientation "
     sb ++= "-ShutterSpeed "
+    sb ++= path
 
     sb.result
-  }
-
-  def main(args: Array[String]): Unit = {
-    val conf = new Conf(args)
-
-    val dir: File = new File(conf.path.getOrElse(""))
-    if (!dir.exists) throw new IllegalArgumentException(s"Directory not found: $dir")
-
-    println("Reading exif data...")
-    val exifToolCommand: String = s"$exifToolCommandSnippet${dir.getAbsolutePath}"
-    val exifToolResult: String = exifToolCommand.!!
-
-    println("Building photographs...")
-    val photographs: ListBuffer[Photograph] = buildPhotographs(exifToolResult)
-
-    println("Inserting exif data...")
-    Database.insertPhotographs(photographs)
-
-    println("Done.")
   }
 
   private def buildPhotographs(exifToolResult: String) : ListBuffer[Photograph] = {
@@ -78,5 +78,6 @@ object ExifReaderApp {
 
 private class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
   val path: ScallopOption[String] = opt[String](required = true)
+  val extensions: ScallopOption[List[String]] = trailArg[List[String]]()
   verify()
 }
