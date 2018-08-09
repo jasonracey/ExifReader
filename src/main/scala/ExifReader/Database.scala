@@ -26,8 +26,7 @@ object Database {
     sb ++= "lens TEXT, "
     sb ++= "megaPixels REAL, "
     sb ++= "orientation TEXT, "
-    sb ++= "shutterSpeed REAL, "
-    sb ++= "UNIQUE (directory, fileName) ON CONFLICT ROLLBACK)"
+    sb ++= "shutterSpeed REAL)"
 
     sb.result
   }
@@ -113,9 +112,8 @@ object Database {
     sb ++= s"'${photograph.cameraModel.orNull}', "
     sb ++= s"'${photograph.colorSpace.orNull}', "
     sb ++= s"'${photograph.createDate.orNull}', "
-    // todo: weird to be enforcing this here?
-    sb ++= s"'${photograph.directory.getOrElse{ throw new Exception("directory must not be null") }}', "
-    sb ++= s"'${photograph.fileName.getOrElse{ throw new Exception("fileName must not be null") }}', "
+    sb ++= s"'${photograph.directory}', "
+    sb ++= s"'${photograph.fileName}', "
     sb ++= s"${photograph.focalLength.map{ _.mm }.orNull}, "
     sb ++= s"${photograph.pixelHeight.orNull}, "
     sb ++= s"${photograph.pixelWidth.orNull}, "
