@@ -41,7 +41,7 @@ class PhotographTests extends FunSuite {
     assert(photo.createDate === Some(localDateTime))
     assert(photo.directory === Some("/Volumes/photos-a/Photographs/2018/20180519_Washington_IngallsCreek/raw"))
     assert(photo.fileName === Some("A7300001.ARW"))
-    assert(photo.focalLength === Some(FocalLength(mm = 99)))
+    assert(photo.focalLength === Some(FocalLength(mm = 185.0f)))
     assert(photo.pixelHeight === Some(4024))
     assert(photo.pixelWidth === Some(6048))
     assert(photo.iso === Some(100))

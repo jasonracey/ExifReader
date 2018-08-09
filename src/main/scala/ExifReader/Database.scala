@@ -19,7 +19,7 @@ object Database {
     sb ++= "createDate TEXT, "
     sb ++= "directory TEXT NOT NULL, "
     sb ++= "fileName TEXT NOT NULL, "
-    sb ++= "focalLength INTEGER, "
+    sb ++= "focalLength REAL, "
     sb ++= "pixelHeight INTEGER, "
     sb ++= "pixelWidth INTEGER, "
     sb ++= "iso INTEGER, "
