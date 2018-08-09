@@ -66,7 +66,7 @@ object Database {
 
     var inserted = 0
 
-    while (inserted <= sortedByPathAndName.size) {
+    while (inserted < sortedByPathAndName.size) {
       val start: Int = inserted
       val stop: Int = start + batchSize
 
