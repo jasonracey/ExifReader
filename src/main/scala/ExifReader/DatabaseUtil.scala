@@ -5,7 +5,7 @@ import java.sql._
 object DatabaseUtil {
   private val batchSize: Int = 100
 
-  private val createTableIfNotExistsSql: String = {
+  private val createPhotographsTableIfNotExistsSql: String = {
     val initialCapacity: Int = 600
 
     val sb = new StringBuilder(initialCapacity)
@@ -56,9 +56,7 @@ object DatabaseUtil {
     sb.result
   }
 
-  execSql(createTableIfNotExistsSql)
-
-  // todo: indexes?
+  def createPhotographsTableIfNotExists(): Unit = execSql(createPhotographsTableIfNotExistsSql)
 
   def insertPhotographs(photographs: Seq[Photograph]): Unit = {
     val sortedByPathAndName: Seq[Photograph] = photographs.sortBy{ photograph: Photograph =>
@@ -82,6 +80,8 @@ object DatabaseUtil {
       inserted += batchSize
     }
   }
+
+  def optimizeDatabase(): Unit = execSql("PRAGMA optimize")
 
   private def execSql(sql: String): Unit = {
     // load the sqlite-JDBC driver using the current class loader

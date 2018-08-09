@@ -25,7 +25,9 @@ object ExifReaderApp {
       val photographs: ListBuffer[Photograph] = buildPhotographs(exifToolResult)
 
       println("Inserting exif data...")
+      DatabaseUtil.createPhotographsTableIfNotExists()
       DatabaseUtil.insertPhotographs(photographs)
+      DatabaseUtil.optimizeDatabase()
     }
 
     println("Done.")
