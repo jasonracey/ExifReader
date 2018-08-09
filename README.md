@@ -9,7 +9,7 @@ $ brew install sqlite
 
 ### Usage
 ```
-$ ./run.sh "-p <path> [extension(s)]"
+$ ./run.sh "-p <path> [extension]"
 ```
 
 ### Examples (macOS)
@@ -19,7 +19,7 @@ To read exif data from all files in the ~/Pictures directory:
 $ ./run.sh "-p ~/Pictures"
 ```
 
-To read exif data from only jpg and tif files in the ~/Pictures directory:
+To read exif data from only jpg files in the ~/Pictures directory:
 ```
-$ ./run.sh "-p ~/Pictures jpg,tif"
+$ ./run.sh "-p ~/Pictures jpg"
 ```
