@@ -2,13 +2,19 @@ package ExifReader
 
 import java.io.File
 import org.rogach.scallop._
+import scala.collection.mutable.ListBuffer
 import scala.sys.process._
+import util.Properties
 
 object ExifReaderApp {
   private val exifToolCommandSnippet: String = {
     val sb = new StringBuilder
 
     sb ++= "exiftool "
+    sb ++= "-ext crw "
+    sb ++= "-ext cr2 "
+    sb ++= "-ext arw "
+    sb ++= "-r "
     sb ++= "-S "
     sb ++= "-Aperture "
     sb ++= "-ColorSpace "
@@ -33,55 +39,44 @@ object ExifReaderApp {
     val conf = new Conf(args)
 
     val dir: File = new File(conf.path.getOrElse(""))
-
     if (!dir.exists) throw new IllegalArgumentException(s"Directory not found: $dir")
 
-    // empty seq means all files
-    val extensions: Seq[String] = conf.extensions.getOrElse(List.empty[String])
+    println("Reading exif data...")
+    val exifToolCommand: String = s"$exifToolCommandSnippet${dir.getAbsolutePath}"
+    val exifToolResult: String = exifToolCommand.!!
 
-    println("Finding files...")
+    println("Building photographs...")
+    val photographs: ListBuffer[Photograph] = buildPhotographs(exifToolResult)
 
-    val files: Seq[File] = FileUtil.getFilesOfType(dir, extensions)
-
-    println(s"${files.size} files found")
-
-    // todo: read and insert in batches? what about restart on fail?
-    if (files.nonEmpty) {
-      val photographs = makePhotographs(files)
-      println("Inserting exif data...")
-      Database.insertPhotographs(photographs)
-    }
+    println("Inserting exif data...")
+    Database.insertPhotographs(photographs)
 
     println("Done.")
   }
 
-  private def makePhotographs(files: Seq[File]) : Seq[Photograph] = {
-    var currentFileCount: Int = 1
+  private def buildPhotographs(exifToolResult: String) : ListBuffer[Photograph] = {
+    val lines: Seq[String] = exifToolResult.split(Properties.lineSeparator)
 
-    val photographOptions: Seq[Option[Photograph]] = files.map{ file: File =>
-      if (currentFileCount == 1 || currentFileCount % 10 == 0) println(s"Reading exif data for file $currentFileCount of ${files.size}")
+    val linesPerPhotograph: Int = 16
+    var start: Int = 0
 
-      // todo: this is painfully slow - try using exiftool's batch read capability
-      val exifToolCommand: String = s"$exifToolCommandSnippet${file.getAbsolutePath}"
+    val photographs: ListBuffer[Photograph] = new ListBuffer[Photograph]()
 
-      try {
-        val result: String = exifToolCommand.!!
-        Some(Photograph(result))
-      } catch {
-        case e: Exception =>
-          System.err.println(e)
-          None
-      } finally {
-        currentFileCount += 1
+    while (start <= lines.size) {
+      val linesOfCurrentPhotograph: Seq[String] = lines.slice(start, start + linesPerPhotograph)
+
+      if (linesOfCurrentPhotograph.size == linesPerPhotograph) {
+        photographs += Photograph(linesOfCurrentPhotograph)
       }
+
+      start += linesPerPhotograph
     }
 
-    photographOptions.filter{ _.isDefined }.map{ _.get }
+    photographs
   }
 }
 
 private class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
   val path: ScallopOption[String] = opt[String](required = true)
-  val extensions: ScallopOption[List[String]] = trailArg[List[String]]()
   verify()
 }
