@@ -56,10 +56,11 @@ object DatabaseUtil {
     sb.result
   }
 
-  def insertPhotographs(photographs: Seq[Photograph]): Unit = {
-    execSql(createTableIfNotExistsSql)
-    // todo: indexes?
+  execSql(createTableIfNotExistsSql)
 
+  // todo: indexes?
+
+  def insertPhotographs(photographs: Seq[Photograph]): Unit = {
     val sortedByPathAndName: Seq[Photograph] = photographs.sortBy{ photograph: Photograph =>
       (photograph.directory, photograph.fileName)
     }
