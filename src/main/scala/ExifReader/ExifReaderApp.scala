@@ -13,16 +13,20 @@ object ExifReaderApp {
     val dir: File = new File(conf.path.getOrElse(""))
     if (!dir.exists) throw new IllegalArgumentException(s"Directory not found: $dir")
 
-    println("Reading exif data...")
+    println("Running exiftool...")
     val extensions: List[String] = conf.extensions.getOrElse(List.empty)
     val exifToolCommand: String = buildExifToolCommand(extensions, dir.getAbsolutePath)
     val exifToolResult: String = exifToolCommand.!!
 
-    println("Building photographs...")
-    val photographs: ListBuffer[Photograph] = buildPhotographs(exifToolResult)
+    if (exifToolResult.contains("0 image files read")) {
+      println("No image files found.")
+    } else {
+      println("Building photographs...")
+      val photographs: ListBuffer[Photograph] = buildPhotographs(exifToolResult)
 
-    println("Inserting exif data...")
-    DatabaseUtil.insertPhotographs(photographs)
+      println("Inserting exif data...")
+      DatabaseUtil.insertPhotographs(photographs)
+    }
 
     println("Done.")
   }
