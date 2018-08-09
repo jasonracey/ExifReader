@@ -14,7 +14,7 @@ $ ./run.sh "-p <path>"
 
 ### Examples (macOS)
 
-To read exif data from all crw, cr2, and arw files in the ~/Pictures directory:
+To read exif data from all `crw`, `cr2`, and `arw` files in the ~/Pictures directory:
 ```
 $ ./run.sh "-p ~/Pictures"
 ```
