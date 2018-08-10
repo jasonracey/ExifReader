@@ -28,6 +28,11 @@ class OrientationTests  extends FunSuite {
     assert(result.get == Portrait)
   }
 
+  test("none returns none"){
+    val result: Option[Orientation] = Orientation.get(None)
+    assert(result.isEmpty)
+  }
+
   test("unexpected input throws exception"){
     val exception: Exception = intercept[Exception](Orientation.get(Some("foo")))
     assert(exception.getMessage == "Unknown orientation: Some(foo)")

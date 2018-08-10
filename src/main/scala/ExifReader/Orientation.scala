@@ -11,6 +11,7 @@ object Orientation extends Enumeration {
       case Some("Horizontal (normal)") => Some(Landscape)
       case Some("Rotate 90 CW")        => Some(Portrait)
       case Some("Rotate 270 CW")       => Some(Portrait)
+      case None                        => None
       case _ => throw new Exception(s"Unknown orientation: $trimmed")
     }
   }
