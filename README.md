@@ -23,3 +23,10 @@ To read exif data from all .arw and .cr2 files in my local Pictures directory:
 ```
 $ ./run.sh "-p /Users/jasonracey/Pictures arw cr2"
 ```
+
+### Exporting to csv
+
+To export all photograph data from photographs.db to photographs.csv:
+```
+$ ./export-to-csv.sh
+```
