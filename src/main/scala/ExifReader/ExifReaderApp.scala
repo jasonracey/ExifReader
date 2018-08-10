@@ -16,7 +16,9 @@ object ExifReaderApp {
     println("Running exiftool...")
     val extensions: List[String] = conf.extensions.getOrElse(List.empty)
     val exifToolCommand: String = buildExifToolCommand(extensions, dir.getAbsolutePath)
-    val exifToolResult: String = exifToolCommand.!!
+    // todo: need some way of reporting progress
+    // using lineStream_! so nonzero exit codes don't break this process by throwing an exception
+    val exifToolResult: String = exifToolCommand.lineStream_!.mkString(Properties.lineSeparator)
 
     if (exifToolResult.contains("0 image files read")) {
       println("No image files found.")
