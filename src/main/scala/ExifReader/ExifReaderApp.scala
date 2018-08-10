@@ -36,7 +36,9 @@ object ExifReaderApp {
   }
 
   private def buildExifToolCommand(extensions: List[String], path: String): String = {
-    val sb = new StringBuilder
+    val initialCapacity: Int = 250
+
+    val sb = new StringBuilder(initialCapacity)
 
     sb ++= "exiftool "
     extensions.foreach{ ext: String => sb ++= s"-ext $ext " }
