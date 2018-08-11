@@ -2,7 +2,6 @@ package ExifReader
 
 import java.io.File
 import org.rogach.scallop._
-import scala.collection.mutable.ListBuffer
 import scala.sys.process._
 import util.Properties
 
@@ -24,7 +23,7 @@ object ExifReaderApp {
       println("No image files found.")
     } else {
       println("Building photographs...")
-      val photographs: ListBuffer[Photograph] = buildPhotographs(exifToolResult)
+      val photographs: List[Photograph] = buildPhotographs(exifToolResult)
 
       println("Inserting exif data...")
       DatabaseUtil.createPhotographsTableIfNotExists()
@@ -64,25 +63,10 @@ object ExifReaderApp {
     sb.result
   }
 
-  private def buildPhotographs(exifToolResult: String) : ListBuffer[Photograph] = {
-    val lines: Seq[String] = exifToolResult.split(Properties.lineSeparator)
-
+  private def buildPhotographs(exifToolResult: String) : List[Photograph] = {
     val linesPerPhotograph: Int = 16
-    var start: Int = 0
-
-    val photographs: ListBuffer[Photograph] = new ListBuffer[Photograph]()
-
-    while (start <= lines.size) {
-      val linesOfCurrentPhotograph: Seq[String] = lines.slice(start, start + linesPerPhotograph)
-
-      if (linesOfCurrentPhotograph.size == linesPerPhotograph) {
-        photographs += Photograph(linesOfCurrentPhotograph)
-      }
-
-      start += linesPerPhotograph
-    }
-
-    photographs
+    val lines: Seq[String] = exifToolResult.split(Properties.lineSeparator)
+    lines.grouped(linesPerPhotograph).map{ Photograph(_) }.toList
   }
 }
 
