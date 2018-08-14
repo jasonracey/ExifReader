@@ -90,7 +90,7 @@ object DatabaseUtil {
     var connection: Connection = null
 
     try {
-      connection = DriverManager.getConnection("jdbc:sqlite:photographs.db")
+      connection = DriverManager.getConnection("jdbc:sqlite:data/photographs.db")
       val statement: Statement = connection.createStatement
       statement.setQueryTimeout(30) // seconds
       statement.executeUpdate(sql)
