@@ -27,9 +27,9 @@ object ExifReaderApp {
       val photographs: List[Photograph] = buildPhotographs(exifToolResult)
 
       println("Inserting exif data...")
-      DatabaseUtil.createPhotographsTableIfNotExists()
-      DatabaseUtil.insertPhotographs(photographs)
-      DatabaseUtil.optimizeDatabase()
+      SqliteUtil.createPhotographsTableIfNotExists()
+      SqliteUtil.insertPhotographs(photographs)
+      SqliteUtil.optimizeDatabase()
     }
 
     println("Done.")
