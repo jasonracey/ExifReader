@@ -1,8 +1,8 @@
 package ExifReader
 
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
-class ShutterSpeedTests extends FunSuite {
+class ShutterSpeedTests extends AnyFunSuite {
   test("can parse fractional input") {
     val result: Option[ShutterSpeed] = ShutterSpeed.get(Some("1/100"))
     assert(result.isDefined)

@@ -12,20 +12,22 @@ object ExifReaderApp {
     val dir: File = new File(conf.path.getOrElse(""))
     if (!dir.exists) throw new IllegalArgumentException(s"Directory not found: $dir")
 
-    println("Running exiftool...")
     val extensions: List[String] = conf.extensions.getOrElse(List.empty)
+
+    println("Running exiftool...")
     val exifToolCommand: String = buildExifToolCommand(extensions, dir.getAbsolutePath)
     // using lineStream_! so ProcessBuilder doesn't throw an exception on non-zero exit code
     // todo: ProcessLogger not working as expected
     val exifToolResultStream: Stream[String] = exifToolCommand.lineStream_!(ProcessLogger(line => Console.out.println(line)))
     val exifToolResult: String = exifToolResultStream.mkString(Properties.lineSeparator)
 
-    if (exifToolResult.contains("0 image files read")) {
-      println("No image files found.")
-    } else {
-      println("Building photographs...")
-      val photographs: List[Photograph] = buildPhotographs(exifToolResult)
+    println("Building photographs...")
+    val photographs: List[Photograph] = buildPhotographs(exifToolResult).filter(p => p.fileName.nonEmpty)
 
+    if (photographs.isEmpty) {
+      println("No valid photographs built.")
+    }
+    else {
       println("Inserting exif data...")
       DatabaseUtil.createPhotographsTableIfNotExists()
       DatabaseUtil.insertPhotographs(photographs)

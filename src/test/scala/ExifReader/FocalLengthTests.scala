@@ -1,8 +1,8 @@
 package ExifReader
 
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
-class FocalLengthTests  extends FunSuite {
+class FocalLengthTests  extends AnyFunSuite {
   test("can parse expected format"){
     val result: Option[FocalLength] = FocalLength.get(Some("50.0 mm"))
     assert(result.isDefined)

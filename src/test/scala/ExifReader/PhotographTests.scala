@@ -1,9 +1,9 @@
 package ExifReader
 
 import java.time.{LocalDateTime, Month}
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
-class PhotographTests extends FunSuite {
+class PhotographTests extends AnyFunSuite {
   private val lines: Seq[String] = Seq(
     "======== /Users/jasonracey/Files/Photographs/20180527_Washington_PointOfTheArches/raw/A7300184.ARW",
     "Aperture: 11.0",

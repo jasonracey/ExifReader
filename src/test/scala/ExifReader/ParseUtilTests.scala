@@ -1,9 +1,9 @@
 package ExifReader
 
 import java.time.{LocalDateTime, Month}
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
-class ParseUtilTests extends FunSuite {
+class ParseUtilTests extends AnyFunSuite {
   test("can parse date time") {
     val result = ParseUtil.dateOption(Some("2018:05:19 12:37:10"), Photograph.exifToolDateTimePattern)
     assert(result.isDefined)

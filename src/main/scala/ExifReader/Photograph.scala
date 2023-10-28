@@ -9,7 +9,7 @@ object Photograph {
   def apply(lines: Seq[String]): Photograph = {
     val fields: Map[String, String] = lines.map{ line: String =>
       val items: Seq[String] = line.split(": ").map{ _.trim }
-      if (items.size == 2) (items(0), items(1))
+      if (items.size == 2) (items.head, items(1))
       else ("", "")
     }.toMap
 

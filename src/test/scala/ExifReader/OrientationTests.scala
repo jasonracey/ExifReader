@@ -1,9 +1,9 @@
 package ExifReader
 
 import ExifReader.Orientation.{Landscape, Orientation, Portrait}
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
-class OrientationTests  extends FunSuite {
+class OrientationTests  extends AnyFunSuite {
   test("can parse landscape orientation"){
     val result: Option[Orientation] = Orientation.get(Some("Horizontal (normal)"))
     assert(result.isDefined)
